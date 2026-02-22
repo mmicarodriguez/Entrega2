@@ -18,14 +18,14 @@ JOIN especialidad e ON m.id_especialidad = e.id_especialidad
 JOIN consultorio c ON t.id_consultorio = c.id_consultorio;
 
 
---Turnos pendientes--
+-- Turnos pendientes--
 CREATE VIEW vista_turnos_pendientes AS
 SELECT *
 FROM turno
 WHERE estado = 'pendiente';
 
 
---Vista medico por especialidad--
+-- Vista medico por especialidad--
 CREATE VIEW vista_medicos_especialidad AS
 SELECT 
 m.id_medico,
@@ -35,3 +35,32 @@ e.nombre AS especialidad
 FROM medico m
 JOIN especialidad e 
 ON m.id_especialidad = e.id_especialidad;
+
+
+-- Turnos del dia--
+CREATE VIEW vw_turnos_del_dia AS
+SELECT
+    t.id_turno,
+    p.nombre AS paciente,
+    m.nombre AS medico,
+    e.nombre AS especialidad,
+    t.fecha,
+    t.hora,
+    t.estado
+FROM turno t
+JOIN paciente p ON t.id_paciente = p.id_paciente
+JOIN medico m ON t.id_medico = m.id_medico
+JOIN especialidad e ON m.id_especialidad = e.id_especialidad
+WHERE t.fecha = CURRENT_DATE;
+
+-- Turnos por medico--
+CREATE VIEW vw_turnos_por_medico AS
+SELECT
+    m.id_medico,
+    m.nombre,
+    e.nombre AS especialidad,
+    COUNT(t.id_turno) AS total_turnos
+FROM medico m
+JOIN especialidad e ON m.id_especialidad = e.id_especialidad
+LEFT JOIN turno t ON m.id_medico = t.id_medico
+GROUP BY m.id_medico, m.nombre, e.nombre;
