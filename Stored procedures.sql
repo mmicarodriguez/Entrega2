@@ -35,3 +35,45 @@ END IF;
 END $$
 
 DELIMITER ;
+
+
+-- Cancela turno--
+DELIMITER $$
+
+CREATE PROCEDURE sp_cancelar_turno(IN turno_id INT)
+BEGIN
+UPDATE turno
+SET estado = 'cancelado'
+WHERE id_turno = turno_id;
+END $$
+
+DELIMITER ;
+
+-- Turno registrado--
+DELIMITER $$
+
+CREATE PROCEDURE sp_registrar_atencion(
+IN turno_id INT,
+IN diagnostico TEXT,
+IN observaciones TEXT
+)
+BEGIN
+
+INSERT INTO atencion(
+id_turno,
+diagnostico,
+observaciones
+)
+VALUES(
+turno_id,
+diagnostico,
+observaciones
+);
+
+UPDATE turno
+SET estado = 'atendido'
+WHERE id_turno = turno_id;
+
+END $$
+
+DELIMITER ;
